@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "subtitles",
+  "version": "${version}",
+
+  "name": "Subtitles",
+  "description": "This mod",
+  "authors": [
+    "Pedro Ricardo"
+  ],
+  "contact": {
+    "homepage": "https://pedroricardo.net",
+    "sources": "https://github.com/Pedro270707"
+  },
+
+  "license": "CC0-1.0",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+        "net.pedroricardo.subtitles.Subtitles"
+    ]
+  },
+  "mixins": [
+      "subtitles.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.13.3"
+  },
+  "suggests": {
+  }
+}
