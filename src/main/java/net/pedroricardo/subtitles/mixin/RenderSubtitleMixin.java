@@ -74,7 +74,7 @@ public class RenderSubtitleMixin {
                         width - (longestStringWidth / 2) - (fontrenderer.getStringWidth(stringToDraw) / 2) - sp - arrowWidth / 2,
                         height - 34 - (subtitleLines * lineHeight) - sp,
                         Color.intToIntARGB(
-                                (int) (Math.min(60.0f, Subtitles.soundsPlaying.get(string)) * 255.0f / 60f), 255,
+                                (int) (Math.min(60.0f, 20.0f + Subtitles.soundsPlaying.get(string)) * 255.0f / 70.0f), 255,
                                 255, 255));
 
                 if (angleDegrees <= 325 && 215 <= angleDegrees) {
@@ -82,14 +82,14 @@ public class RenderSubtitleMixin {
                             width - 6 - sp,
                             height - 34 - (subtitleLines * lineHeight) - sp,
                             Color.intToIntARGB(
-                                    (int) (Math.min(60.0f, Subtitles.soundsPlaying.get(string)) * 255.0f / 60f), 255,
+                                    (int) (Math.min(60.0f, 10.0f + Subtitles.soundsPlaying.get(string)) * 255.0f / 70.0f), 255,
                                     255, 255));
                 } else if (angleDegrees >= 35 && 145 >= angleDegrees) {
                     fontrenderer.drawString("<",
                             width - longestStringWidth - sp - arrowWidth,
                             height - 34 - (subtitleLines * lineHeight) - sp,
                             Color.intToIntARGB(
-                                    (int) (Math.min(60.0f, Subtitles.soundsPlaying.get(string)) * 255.0f / 60f), 255,
+                                    (int) (Math.min(60.0f, 20.0f + Subtitles.soundsPlaying.get(string)) * 255.0f / 70.0f), 255,
                                     255, 255));
                 }
             } else {

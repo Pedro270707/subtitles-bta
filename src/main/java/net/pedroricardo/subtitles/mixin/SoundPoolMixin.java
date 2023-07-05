@@ -1,5 +1,6 @@
 package net.pedroricardo.subtitles.mixin;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
 import net.pedroricardo.subtitles.Subtitles;
@@ -23,13 +24,11 @@ import java.nio.ByteOrder;
 public class SoundPoolMixin {
     @Inject(method = "playSound", at = @At(value = "INVOKE", target = "Lpaulscode/sound/SoundSystem;newSource(ZLjava/lang/String;Ljava/net/URL;Ljava/lang/String;ZFFFIF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void playSound(String s, float x, float y, float z, float f3, float f4, CallbackInfo ci,
-                          SoundPoolEntry soundpoolentry, String s1, float f5) throws IOException,
-            UnsupportedAudioFileException {
+                          SoundPoolEntry soundpoolentry, String s1, float f5) throws IOException {
         File file = new File(soundpoolentry.soundUrl.getPath());
-        double soundDuration = 0.0f;
         if (file.getName().endsWith(".ogg")) {
-            soundDuration = calculateDuration(file);
-            Subtitles.soundsPlaying.put(s, 60.0f + (float)soundDuration / 15.0f);
+            double soundDuration = calculateDuration(file);
+            Subtitles.soundsPlaying.put(s, 60.0f + (float)soundDuration / 50.0f);
         } else {
             Subtitles.soundsPlaying.put(s, 150.0f);
         }

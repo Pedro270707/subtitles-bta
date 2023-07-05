@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Subtitles",
-  "description": "This mod",
+  "description": "This mod adds modern subtitles to the game.",
   "authors": [
     "Pedro Ricardo"
   ],
