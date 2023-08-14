@@ -1,5 +1,5 @@
 plugins {
-	id 'babric-loom' version '1.1.+'
+	id "org.quiltmc.loom" version "1.+"
 	id 'java'
 }
 
@@ -8,7 +8,7 @@ archivesBaseName = project.mod_name
 version = project.mod_version
 
 loom {
-	gluedMinecraftJar()
+	clientOnlyMinecraftJar()
 	noIntermediateMappings()
 	customMinecraftManifest.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
 }
@@ -48,9 +48,9 @@ repositories {
 		metadataSources { artifact() }
 	}
 	ivy {
-		url = "https://github.com/Pedro270707"
+		url = "https://github.com/MartinSVK12"
 		patternLayout {
-			artifact "[organisation]/releases/download/v[revision]/[module]-[revision].jar"
+			artifact "[organisation]/releases/download/[revision]/[module]-[revision].jar"
 			m2compatible = true
 		}
 		metadataSources { artifact() }
@@ -62,13 +62,11 @@ dependencies {
 	mappings loom.layered() {}
 
 	modRuntimeOnly "objects:client:43db9b498cb67058d2e12d394e6507722e71bb45" // https://piston-data.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar
-	modImplementation "babric:fabric-loader:${project.loader_version}"
+	modImplementation("quilt-loader:quilt-loader:${project.loader_version}")
 
 	// Helper library
 	// If you do not need Halplibe you can comment this line out or delete this line
 	modImplementation "bta-halplibe:halplibe:${project.halplibe_version}"
-
-	include modImplementation("pedrolibrary-bta:pedrolibrary:${project.pedrolibrary_version}")
 
 	modImplementation "org.slf4j:slf4j-api:1.8.0-beta4"
 	modImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0"

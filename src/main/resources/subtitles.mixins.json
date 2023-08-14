@@ -4,12 +4,12 @@
   "package": "net.pedroricardo.subtitles.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+  ],
+  "client": [
     "RenderSubtitleMixin",
     "RenderSubtitleMixin$GuiAccessor",
     "RenderSubtitleMixin$GuiIngameAccessor",
     "SoundPoolMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

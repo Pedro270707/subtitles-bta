@@ -1,8 +1,12 @@
 package net.pedroricardo.subtitles.mixin;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
-import net.minecraft.src.helper.Color;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.render.FontRenderer;
+import net.minecraft.core.lang.I18n;
+import net.minecraft.core.util.helper.Color;
+import net.minecraft.core.util.phys.Vec3d;
 import net.pedroricardo.subtitles.Subtitles;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,13 +30,13 @@ public class RenderSubtitleMixin {
 
     @Mixin(value = Gui.class, remap = false)
     private interface GuiAccessor {
-        @Invoker("drawRectBetter")
+        @Invoker("drawRectWidthHeight")
         void drawRectInvoker(int x, int y, int width, int height, int color);
     }
 
-    @Inject(method = "renderGameOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/src/EntityRenderer;setupScaledResolution()V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "renderGameOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;setupScaledResolution()V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     public void renderGameOverlay(float partialTicks, boolean flag, int mouseX, int mouseY, CallbackInfo ci,
-                                  StringTranslate stringtranslate, int width, int height, int sp,
+                                  I18n stringtranslate, int width, int height, int sp,
                                   FontRenderer fontrenderer) {
         Minecraft minecraft = ((GuiIngameAccessor)((GuiIngame)(Object)this)).mc();
         int subtitleLines = 0;
@@ -50,12 +54,15 @@ public class RenderSubtitleMixin {
             if (Subtitles.soundsPlaying.get(string) > 0) {
                 subtitleLines++;
                 Subtitles.soundsPlaying.put(string, Subtitles.soundsPlaying.get(string) - partialTicks);
-                Vec3D playerVector = minecraft.thePlayer.getLookVec().normalize();
-                Vec3D soundVector = Vec3D.createVector(Subtitles.soundsPlayingPositions.get(string)[0] - minecraft.thePlayer.posX, 0.0f, Subtitles.soundsPlayingPositions.get(string)[1] - minecraft.thePlayer.posZ).normalize();
+                double angleDegrees = 0.0f;
+                if (Subtitles.soundsPlayingPositions.get(string)[0] != null && Subtitles.soundsPlayingPositions.get(string)[1] != null) {
+                    Vec3d playerVector = minecraft.thePlayer.getLookAngle().normalize();
+                    Vec3d soundVector = Vec3d.createVector(Subtitles.soundsPlayingPositions.get(string)[0] - minecraft.thePlayer.x, 0.0f, Subtitles.soundsPlayingPositions.get(string)[1] - minecraft.thePlayer.z).normalize();
 
-                double crossProduct = soundVector.xCoord * playerVector.zCoord - soundVector.zCoord * playerVector.xCoord;
-                double angleRadians = Math.atan2(crossProduct, dotProduct(playerVector, soundVector));
-                double angleDegrees = Math.toDegrees(angleRadians);
+                    double crossProduct = soundVector.xCoord * playerVector.zCoord - soundVector.zCoord * playerVector.xCoord;
+                    double angleRadians = Math.atan2(crossProduct, dotProduct(playerVector, soundVector));
+                    angleDegrees = Math.toDegrees(angleRadians);
+                }
 
                 // Normalize the angle to be within the range of 0 to 360
                 angleDegrees = (angleDegrees + 360) % 360;
@@ -100,7 +107,7 @@ public class RenderSubtitleMixin {
         }
     }
 
-    private static double dotProduct(Vec3D vec1, Vec3D vec2) {
+    private static double dotProduct(Vec3d vec1, Vec3d vec2) {
         return vec1.xCoord * vec2.xCoord + vec1.yCoord * vec2.yCoord + vec1.zCoord * vec2.zCoord;
     }
 }

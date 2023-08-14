@@ -1,8 +1,8 @@
 package net.pedroricardo.subtitles.mixin;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.SoundManager;
-import net.minecraft.src.SoundPoolEntry;
+import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.sound.SoundPoolEntry;
+import net.minecraft.core.sound.SoundType;
 import net.pedroricardo.subtitles.Subtitles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,10 +10,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,17 +18,30 @@ import java.nio.ByteOrder;
 
 @Mixin(value = SoundManager.class, remap = false)
 public class SoundPoolMixin {
-    @Inject(method = "playSound", at = @At(value = "INVOKE", target = "Lpaulscode/sound/SoundSystem;newSource(ZLjava/lang/String;Ljava/net/URL;Ljava/lang/String;ZFFFIF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void playSound(String s, float x, float y, float z, float f3, float f4, CallbackInfo ci,
+
+    @Inject(method = "playSound(Ljava/lang/String;Lnet/minecraft/core/sound/SoundType;FFFFF)V", at = @At(value = "INVOKE", target = "Lpaulscode/sound/SoundSystem;newSource(ZLjava/lang/String;Ljava/net/URL;Ljava/lang/String;ZFFFIF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void playSound(String soundPath, SoundType soundType, float x, float y, float z, float f3, float f4, CallbackInfo ci,
                           SoundPoolEntry soundpoolentry, String s1, float f5) throws IOException {
         File file = new File(soundpoolentry.soundUrl.getPath());
         if (file.getName().endsWith(".ogg")) {
             double soundDuration = calculateDuration(file);
-            Subtitles.soundsPlaying.put(s, 60.0f + (float)soundDuration / 50.0f);
+            Subtitles.soundsPlaying.put(soundPath, 60.0f + (float)soundDuration / 50.0f);
         } else {
-            Subtitles.soundsPlaying.put(s, 150.0f);
+            Subtitles.soundsPlaying.put(soundPath, 150.0f);
         }
-        Subtitles.soundsPlayingPositions.put(s, new Float[]{x, z});
+        Subtitles.soundsPlayingPositions.put(soundPath, new Float[]{x, z});
+    }
+
+    @Inject(method = "playSound(Ljava/lang/String;Lnet/minecraft/core/sound/SoundType;FF)V", at = @At(value = "INVOKE", target = "Lpaulscode/sound/SoundSystem;newSource(ZLjava/lang/String;Ljava/net/URL;Ljava/lang/String;ZFFFIF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void playSound(String soundPath, SoundType soundType, float volume, float pitch, CallbackInfo ci, SoundPoolEntry soundpoolentry, String soundName) throws IOException {
+        File file = new File(soundpoolentry.soundUrl.getPath());
+        if (file.getName().endsWith(".ogg")) {
+            double soundDuration = calculateDuration(file);
+            Subtitles.soundsPlaying.put(soundPath, 60.0f + (float)soundDuration / 50.0f);
+        } else {
+            Subtitles.soundsPlaying.put(soundPath, 150.0f);
+        }
+        Subtitles.soundsPlayingPositions.put(soundPath, new Float[]{null, null});
     }
 
     private double calculateDuration(final File oggFile) throws IOException {
